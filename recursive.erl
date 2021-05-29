@@ -2,7 +2,8 @@
 -export([fact/1, len/1, reverse/1, tail_len/1,
          tail_fac/1, duplicate/2, tail_duplicate/2,
          tail_reverse/1, sublist/2, tail_sublist/2,
-         zip/2, tail_zip/2, lenient_zip/2, tail_lenient_zip/2]).
+         zip/2, tail_zip/2, lenient_zip/2, tail_lenient_zip/2,
+         quicksort/1, lc_quicksort/1]).
 
 %% factorial function
 fact(0)  -> 1;
@@ -94,3 +95,22 @@ tail_lenient_zip([], _, ListZipped) -> ListZipped;
 tail_lenient_zip(_, [], ListZipped) -> ListZipped;
 tail_lenient_zip([X|Xs],[Y|Ys], ListZipped) -> tail_lenient_zip(Xs, Ys, [{X,Y}|ListZipped]).
 
+
+%% quicksort function
+quicksort([]) -> [];
+quicksort([Pivot|Rest]) ->
+    {Smaller, Larger} = partition(Pivot,Rest,[],[]),
+    quicksort(Smaller) ++ [Pivot] ++ quicksort(Larger).
+
+partition(_,[], Smaller, Larger) -> {Smaller, Larger};
+partition(Pivot, [H|T], Smaller, Larger) ->
+        if H =< Pivot -> partition(Pivot, T, [H|Smaller], Larger);
+           H >  Pivot -> partition(Pivot, T, Smaller, [H|Larger])
+        end.
+
+%% quicksort using comprehensions lists        
+lc_quicksort([]) -> [];
+lc_quicksort([Pivot|Rest]) ->
+    lc_quicksort([Smaller || Smaller <- Rest, Smaller =< Pivot])
+    ++ [Pivot] ++
+    lc_quicksort([Larger || Larger <- Rest, Larger > Pivot]).
